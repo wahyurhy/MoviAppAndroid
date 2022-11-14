@@ -36,4 +36,14 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    // fast android networking
+    implementation 'com.amitshekhar.android:jackson-android-networking:1.0.2'
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.10'
+
+    // multidex
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
 }

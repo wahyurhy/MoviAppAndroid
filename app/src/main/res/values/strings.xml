@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MoviAppAndroid</string>
     <string name="app_name_muvi">Muvi</string>
+    <string name="top_rated_movie">Top Rated Movie</string>
 </resources>
