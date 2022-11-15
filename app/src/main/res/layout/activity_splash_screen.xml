@@ -14,24 +14,11 @@
         android:orientation="horizontal"
         tools:ignore="UselessParent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="M"
-            android:textStyle="bold"
-            android:paddingHorizontal="30dp"
-            android:textSize="50sp"
-            android:background="@drawable/bg_logo_app"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name_muvi"
-            android:textSize="40sp"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="center"
-            android:textColor="@color/white" />
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_app" />
 
     </LinearLayout>
 

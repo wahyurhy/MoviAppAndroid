@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.*;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -95,15 +97,23 @@ public class TopRatedMovieAdapter extends RecyclerView.Adapter<TopRatedMovieAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        //private ANImageView imageView;
+        private ANImageView mPosterMovie;
+        private TextView mTitleMovie, mVoteAverage, mYear;
 
-        public ViewHolder(@NonNull View view) {
-            super(view);
-            //imageView = view.findViewById(R.id.rv_top_rated_movie);
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mPosterMovie = itemView.findViewById(R.id.poster_image);
+            mTitleMovie = itemView.findViewById(R.id.tv_title);
+            mVoteAverage = itemView.findViewById(R.id.tv_vote_average);
+            mYear = itemView.findViewById(R.id.tv_year);
         }
 
         public void bind(final ResultsItemTopRatedMovie resultsItemTopRatedMovie, final int position) {
-            Log.d("TAG", "bind: " + resultsItemTopRatedMovie.getTitle());
+            mPosterMovie.setDefaultImageResId(R.drawable.logo_app);
+            mPosterMovie.setImageUrl("https://image.tmdb.org/t/p/w300" + resultsItemTopRatedMovie.getBackdropPath());
+            mTitleMovie.setText(resultsItemTopRatedMovie.getTitle());
+            mVoteAverage.setText(String.valueOf(resultsItemTopRatedMovie.getVoteAverage()));
+            mYear.setText(resultsItemTopRatedMovie.getReleaseDate().substring(0, 4));
         }
 
     }

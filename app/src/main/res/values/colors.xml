@@ -10,5 +10,8 @@
 
     // custom colors
     <color name="bg_app_color">#202123</color>
+    <color name="bg_app_color_transparent">#5B202123</color>
     <color name="logo_app_color">#FCCD2A</color>
+    <color name="quality_badge_1">#EDD171</color>
+    <color name="quality_badge_2">#FCCD2A</color>
 </resources>

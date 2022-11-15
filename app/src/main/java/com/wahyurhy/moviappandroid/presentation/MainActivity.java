@@ -2,6 +2,7 @@ package com.wahyurhy.moviappandroid.presentation;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,7 +63,11 @@ public class MainActivity extends AppCompatActivity {
                         dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemTopRatedMovie>>() {
                         }.getType());
 
-                        Toast.makeText(MainActivity.this, resultString, Toast.LENGTH_SHORT).show();
+                        if (dataResultItem.size() != 0) {
+                            topRatedMovieAdapter.addAll(dataResultItem);
+                        } else {
+                            mRvTopRatedMovie.setVisibility(View.GONE);
+                        }
                     }
 
                     @Override
