@@ -18,9 +18,12 @@ import com.google.gson.reflect.TypeToken;
 import com.wahyurhy.moviappandroid.R;
 import com.wahyurhy.moviappandroid.core.data.remote.response.popularactor.ResponsePopularActor;
 import com.wahyurhy.moviappandroid.core.data.remote.response.popularactor.ResultsItemPopularActor;
+import com.wahyurhy.moviappandroid.core.data.remote.response.popularmovie.ResponsePopularMovie;
+import com.wahyurhy.moviappandroid.core.data.remote.response.popularmovie.ResultsItemPopularMovie;
 import com.wahyurhy.moviappandroid.core.data.remote.response.toprated.ResponseTopRatedMovie;
 import com.wahyurhy.moviappandroid.core.data.remote.response.toprated.ResultsItemTopRatedMovie;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularActorAdapter;
+import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularMovieAdapter;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.TopRatedMovieAdapter;
 
 import java.util.ArrayList;
@@ -31,9 +34,11 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRvTopRatedMovie;
+    private RecyclerView mRvPopularActor;
+    private RecyclerView mRvPopularMovie;
     private TopRatedMovieAdapter topRatedMovieAdapter;
     private PopularActorAdapter popularActorAdapter;
-    private RecyclerView mRvPopularActor;
+    private PopularMovieAdapter popularMovieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,60 @@ public class MainActivity extends AppCompatActivity {
     private void initLoadData() {
         loadDataTopRated();
         loadDataPopularActor();
+        loadDataPopularMovie();
+    }
+
+    private void loadDataPopularMovie() {
+        AndroidNetworking.get("https://api.themoviedb.org/3/movie/popular")
+                .addQueryParameter("api_key", "f3aa39c23e3c246fc689906fcddb40b5")
+                .addQueryParameter("language", "en-US")
+                .addQueryParameter("page", "1")
+                .setTag("loadDataPopularActor")
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsOkHttpResponseAndObject(ResponsePopularMovie.class, new OkHttpResponseAndParsedRequestListener<ResponsePopularMovie>() {
+                    @Override
+                    public void onResponse(Response okHttpResponse, ResponsePopularMovie response) {
+                        Gson gson = new Gson();
+                        List<ResultsItemPopularMovie> dataResultItem;
+                        String resultString = gson.toJson(response.getResults());
+
+                        popularMovieAdapter = new PopularMovieAdapter(MainActivity.this);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+                        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+                        mRvPopularMovie.setLayoutManager(linearLayoutManager);
+                        mRvPopularMovie.setHasFixedSize(true);
+                        mRvPopularMovie.setAdapter(popularMovieAdapter);
+
+                        dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemPopularMovie>>() {
+                        }.getType());
+
+                        if (dataResultItem.size() != 0) {
+                            popularMovieAdapter.addAll(dataResultItem);
+                        } else {
+                            mRvPopularMovie.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        Toast.makeText(MainActivity.this, error.getErrorDetail(), Toast.LENGTH_SHORT).show();
+                        if (error.getErrorCode() != 0) {
+                            // received error from server
+                            // error.getErrorCode() - the error code from server
+                            // error.getErrorBody() - the error body from server
+                            // error.getErrorDetail() - just an error detail
+                            Log.d("TAG", "onError errorCode : " + error.getErrorCode());
+                            Log.d("TAG", "onError errorBody : " + error.getErrorBody());
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                            // get parsed error object (If ApiError is your class)
+
+                        } else {
+                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                        }
+                    }
+                });
     }
 
     private void loadDataPopularActor() {
@@ -158,5 +217,6 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         mRvTopRatedMovie = findViewById(R.id.rv_top_rated_movie);
         mRvPopularActor = findViewById(R.id.rv_popular_actor);
+        mRvPopularMovie = findViewById(R.id.rv_popular_movie);
     }
 }
