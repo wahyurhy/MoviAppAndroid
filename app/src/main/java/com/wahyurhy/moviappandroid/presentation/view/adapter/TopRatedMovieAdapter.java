@@ -5,9 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.*;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +25,7 @@ public class TopRatedMovieAdapter extends RecyclerView.Adapter<TopRatedMovieAdap
     private ResultsItemTopRatedMovie resultsItemTopRatedMovie;
     private OnItemClickListener onItemClickListener;
 
-    public TopRatedMovieAdapter( Context context) {
+    public TopRatedMovieAdapter(Context context) {
         this.context = context;
         resultsItemTopRatedMovieList = new ArrayList<>();
     }
@@ -99,6 +98,7 @@ public class TopRatedMovieAdapter extends RecyclerView.Adapter<TopRatedMovieAdap
 
         private ANImageView mPosterMovie;
         private TextView mTitleMovie, mVoteAverage, mYear;
+        private RelativeLayout mRelativeLayoutMain;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,6 +106,7 @@ public class TopRatedMovieAdapter extends RecyclerView.Adapter<TopRatedMovieAdap
             mTitleMovie = itemView.findViewById(R.id.tv_title);
             mVoteAverage = itemView.findViewById(R.id.tv_vote_average);
             mYear = itemView.findViewById(R.id.tv_year);
+            mRelativeLayoutMain = itemView.findViewById(R.id.lyt_top_rated_movie_item);
         }
 
         public void bind(final ResultsItemTopRatedMovie resultsItemTopRatedMovie, final int position) {
@@ -114,6 +115,13 @@ public class TopRatedMovieAdapter extends RecyclerView.Adapter<TopRatedMovieAdap
             mTitleMovie.setText(resultsItemTopRatedMovie.getTitle());
             mVoteAverage.setText(String.valueOf(resultsItemTopRatedMovie.getVoteAverage()));
             mYear.setText(resultsItemTopRatedMovie.getReleaseDate().substring(0, 4));
+
+            mRelativeLayoutMain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.onItemClick(itemView, resultsItemTopRatedMovie, position);
+                }
+            });
         }
 
     }

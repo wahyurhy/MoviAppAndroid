@@ -1,5 +1,6 @@
 package com.wahyurhy.moviappandroid.presentation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,13 +26,14 @@ import com.wahyurhy.moviappandroid.core.data.remote.response.toprated.ResultsIte
 import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularActorAdapter;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularMovieAdapter;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.TopRatedMovieAdapter;
+import com.wahyurhy.moviappandroid.presentation.view.detail.DetailMovieActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TopRatedMovieAdapter.OnItemClickListener {
 
     private RecyclerView mRvTopRatedMovie;
     private RecyclerView mRvPopularActor;
@@ -187,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (dataResultItem.size() != 0) {
                             topRatedMovieAdapter.addAll(dataResultItem);
+                            topRatedMovieAdapter.setOnItemClickListener(MainActivity.this);
                         } else {
                             mRvTopRatedMovie.setVisibility(View.GONE);
                         }
@@ -218,5 +221,12 @@ public class MainActivity extends AppCompatActivity {
         mRvTopRatedMovie = findViewById(R.id.rv_top_rated_movie);
         mRvPopularActor = findViewById(R.id.rv_popular_actor);
         mRvPopularMovie = findViewById(R.id.rv_popular_movie);
+    }
+
+    @Override
+    public void onItemClick(View view, ResultsItemTopRatedMovie resultsItemTopRatedMovie, int position) {
+        Intent intentDetailActivity = new Intent(MainActivity.this, DetailMovieActivity.class);
+        intentDetailActivity.putExtra("id_extra", String.valueOf(resultsItemTopRatedMovie.getId()));
+        startActivity(intentDetailActivity);
     }
 }

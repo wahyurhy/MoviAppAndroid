@@ -4,4 +4,8 @@
     <string name="top_rated_movie">Top Rated Movie</string>
     <string name="popular_actor">Popular Actor</string>
     <string name="popular_movie">Popular Movie</string>
+    <string name="overview">Overview</string>
+    <string name="video">Video</string>
+    <string name="hour_in_short">h</string>
+    <string name="minute_in_short">m</string>
 </resources>
