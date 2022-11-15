@@ -2,6 +2,10 @@ package com.wahyurhy.moviappandroid.presentation.view.detail;
 
 import static com.wahyurhy.moviappandroid.utils.Utils.setSystemBarFitWindow;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidnetworking.AndroidNetworking;
@@ -17,12 +22,20 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.OkHttpResponseAndParsedRequestListener;
 import com.androidnetworking.widget.ANImageView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wahyurhy.moviappandroid.R;
 import com.wahyurhy.moviappandroid.core.data.remote.response.detailmovie.ResponseDetailMovie;
+import com.wahyurhy.moviappandroid.core.data.remote.response.videos.ResponseVideos;
+import com.wahyurhy.moviappandroid.core.data.remote.response.videos.ResultsItemVideos;
+import com.wahyurhy.moviappandroid.presentation.view.adapter.VideoAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Response;
 
-public class DetailMovieActivity extends AppCompatActivity {
+public class DetailMovieActivity extends AppCompatActivity implements VideoAdapter.OnItemClickListener {
 
     private ANImageView mIvDetailMovie;
     private ImageButton mIbBack;
@@ -36,6 +49,8 @@ public class DetailMovieActivity extends AppCompatActivity {
     private TextView mTvOverviewContent;
     private RecyclerView mRvVideoTrailer;
 
+    private VideoAdapter videoAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +58,59 @@ public class DetailMovieActivity extends AppCompatActivity {
         initialize();
         initView();
         initExtras();
+    }
 
+    private void loadDataVideo(String id) {
+        AndroidNetworking.get("https://api.themoviedb.org/3/movie/" + id + "/videos")
+                .addQueryParameter("api_key", "f3aa39c23e3c246fc689906fcddb40b5")
+                .addQueryParameter("language", "en-US")
+                .setTag("loadDataVideo")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsOkHttpResponseAndObject(ResponseVideos.class, new OkHttpResponseAndParsedRequestListener<ResponseVideos>() {
+                    @Override
+                    public void onResponse(Response okHttpResponse, ResponseVideos response) {
+                        Gson gson = new Gson();
+                        List<ResultsItemVideos> dataResultItem;
+                        String resultString = gson.toJson(response.getResults());
+
+                        videoAdapter = new VideoAdapter(DetailMovieActivity.this);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(DetailMovieActivity.this);
+                        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+                        mRvVideoTrailer.setLayoutManager(linearLayoutManager);
+                        mRvVideoTrailer.setHasFixedSize(true);
+                        mRvVideoTrailer.setAdapter(videoAdapter);
+
+                        dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemVideos>>() {
+                        }.getType());
+
+                        if (dataResultItem.size() != 0) {
+                            videoAdapter.addAll(dataResultItem);
+                            videoAdapter.setOnItemClickListener(DetailMovieActivity.this);
+                        } else {
+                            mRvVideoTrailer.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        Toast.makeText(DetailMovieActivity.this, error.getErrorDetail(), Toast.LENGTH_SHORT).show();
+                        if (error.getErrorCode() != 0) {
+                            // received error from server
+                            // error.getErrorCode() - the error code from server
+                            // error.getErrorBody() - the error body from server
+                            // error.getErrorDetail() - just an error detail
+                            Log.d("TAG", "onError errorCode : " + error.getErrorCode());
+                            Log.d("TAG", "onError errorBody : " + error.getErrorBody());
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                            // get parsed error object (If ApiError is your class)
+
+                        } else {
+                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                        }
+                    }
+                });
     }
 
     private void initExtras() {
@@ -51,6 +118,7 @@ public class DetailMovieActivity extends AppCompatActivity {
         if (!extras.isEmpty()) {
             String id = extras.getString("id_extra");
             loadDataDetailMovie(id);
+            loadDataVideo(id);
         }
     }
 
@@ -149,5 +217,22 @@ public class DetailMovieActivity extends AppCompatActivity {
 
     private void initialize() {
         setSystemBarFitWindow(this);
+    }
+
+    public static void watchYoutubeVideo(Context context, String id){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
+        }
+    }
+
+    @Override
+    public void onItemClick(View view, ResultsItemVideos resultsItemVideos, int position) {
+        Toast.makeText(this, resultsItemVideos.getName(), Toast.LENGTH_SHORT).show();
+        watchYoutubeVideo(this, String.valueOf(resultsItemVideos.getKey()));
     }
 }

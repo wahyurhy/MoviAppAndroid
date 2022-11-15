@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:id="@+id/lyt_video_trailer_item"
@@ -11,12 +12,32 @@
         android:layout_marginEnd="20dp"
         app:cardCornerRadius="15dp">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/ib_video_trailer"
-            android:layout_width="250dp"
-            android:layout_height="150dp"
-            android:src="@drawable/ic_play"
-            android:background="@drawable/img_trailer" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="UselessParent">
+
+                <com.androidnetworking.widget.ANImageView
+                    android:id="@+id/ib_video_trailer"
+                    android:layout_width="250dp"
+                    android:layout_height="150dp"
+                    android:background="@drawable/img_trailer"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_play"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/play_video" />
+
+            </RelativeLayout>
+
+        </FrameLayout>
 
     </androidx.cardview.widget.CardView>
 
