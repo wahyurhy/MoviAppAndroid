@@ -8,6 +8,7 @@
     tools:context=".presentation.MainActivity">
 
     <LinearLayout
+        android:id="@+id/lyt_top_rated_movie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -15,11 +16,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/top_rated_movie"
-            android:paddingTop="40dp"
             android:paddingHorizontal="30dp"
+            android:paddingTop="40dp"
+            android:text="@string/top_rated_movie"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_top_rated_movie"
@@ -27,12 +29,38 @@
             android:layout_height="171dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            tools:listitem="@layout/item_top_rated_movie"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_top_rated_movie" />
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/lyt_popular_actor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lyt_top_rated_movie"
+        android:orientation="vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="30dp"
+            android:paddingTop="20dp"
+            android:text="@string/popular_actor"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_popular_actor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_popular_actor" />
+
+    </LinearLayout>
 
 
 </RelativeLayout>
