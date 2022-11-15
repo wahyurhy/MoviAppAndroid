@@ -33,7 +33,7 @@ import java.util.List;
 
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements TopRatedMovieAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements TopRatedMovieAdapter.OnItemClickListener, PopularMovieAdapter.OnItemClickListener {
 
     private RecyclerView mRvTopRatedMovie;
     private RecyclerView mRvPopularActor;
@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
 
                         if (dataResultItem.size() != 0) {
                             popularMovieAdapter.addAll(dataResultItem);
+                            popularMovieAdapter.setOnItemClickListener(MainActivity.this);
                         } else {
                             mRvPopularMovie.setVisibility(View.GONE);
                         }
@@ -227,6 +228,13 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
     public void onItemClick(View view, ResultsItemTopRatedMovie resultsItemTopRatedMovie, int position) {
         Intent intentDetailActivity = new Intent(MainActivity.this, DetailMovieActivity.class);
         intentDetailActivity.putExtra("id_extra", String.valueOf(resultsItemTopRatedMovie.getId()));
+        startActivity(intentDetailActivity);
+    }
+
+    @Override
+    public void onItemClick(View view, ResultsItemPopularMovie resultsItemPopularMovie, int position) {
+        Intent intentDetailActivity = new Intent(MainActivity.this, DetailMovieActivity.class);
+        intentDetailActivity.putExtra("id_extra", String.valueOf(resultsItemPopularMovie.getId()));
         startActivity(intentDetailActivity);
     }
 }

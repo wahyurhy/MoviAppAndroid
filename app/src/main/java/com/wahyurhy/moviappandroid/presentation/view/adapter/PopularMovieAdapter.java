@@ -106,6 +106,13 @@ public class PopularMovieAdapter extends RecyclerView.Adapter<PopularMovieAdapte
         public void bind(final ResultsItemPopularMovie resultsItemPopularMovie, final int position) {
             mPosterPath.setDefaultImageResId(R.drawable.bg_popular_movie);
             mPosterPath.setImageUrl("https://image.tmdb.org/t/p/w300" + resultsItemPopularMovie.getPosterPath());
+
+            mPosterPath.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.onItemClick(itemView, resultsItemPopularMovie, position);
+                }
+            });
         }
 
     }
