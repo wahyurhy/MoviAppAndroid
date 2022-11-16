@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="150dp"
+        android:layout_height="220dp"
+        android:layout_marginEnd="25dp"
+        app:cardCornerRadius="10dp">
+
+        <com.androidnetworking.widget.ANImageView
+            android:id="@+id/poster_path"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_popular_movie" />
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

@@ -26,6 +26,7 @@ import com.wahyurhy.moviappandroid.core.data.remote.response.toprated.ResultsIte
 import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularActorAdapter;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularMovieAdapter;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.TopRatedMovieAdapter;
+import com.wahyurhy.moviappandroid.presentation.view.detail.BioActivity;
 import com.wahyurhy.moviappandroid.presentation.view.detail.DetailMovieActivity;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import java.util.List;
 
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements TopRatedMovieAdapter.OnItemClickListener, PopularMovieAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements TopRatedMovieAdapter.OnItemClickListener, PopularMovieAdapter.OnItemClickListener, PopularActorAdapter.OnItemClickListener {
 
     private RecyclerView mRvTopRatedMovie;
     private RecyclerView mRvPopularActor;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
 
                         if (dataResultItem.size() != 0) {
                             popularActorAdapter.addAll(dataResultItem);
+                            popularActorAdapter.setOnItemClickListener(MainActivity.this);
                         } else {
                             mRvPopularActor.setVisibility(View.GONE);
                         }
@@ -236,5 +238,15 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
         Intent intentDetailActivity = new Intent(MainActivity.this, DetailMovieActivity.class);
         intentDetailActivity.putExtra("id_extra", String.valueOf(resultsItemPopularMovie.getId()));
         startActivity(intentDetailActivity);
+    }
+
+    @Override
+    public void onItemClick(View view, ResultsItemPopularActor resultsItemPopularActor, int position) {
+        Gson gson = new Gson();
+
+        Intent intentBioActivity = new Intent(MainActivity.this, BioActivity.class);
+        intentBioActivity.putExtra("id_extra", String.valueOf(resultsItemPopularActor.getId()));
+        intentBioActivity.putExtra("actor_extra", gson.toJson(resultsItemPopularActor));
+        startActivity(intentBioActivity);
     }
 }

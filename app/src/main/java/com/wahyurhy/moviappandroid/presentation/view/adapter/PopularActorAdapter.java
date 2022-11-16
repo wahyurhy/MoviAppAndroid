@@ -110,6 +110,13 @@ public class PopularActorAdapter extends RecyclerView.Adapter<PopularActorAdapte
             mProfilePath.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bg_popular_actor));
             mProfilePath.setImageUrl("https://image.tmdb.org/t/p/w300" + resultsItemPopularActor.getProfilePath());
             mName.setText(resultsItemPopularActor.getName());
+
+            mProfilePath.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.onItemClick(itemView, resultsItemPopularActor, position);
+                }
+            });
         }
 
     }

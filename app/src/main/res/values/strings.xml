@@ -9,4 +9,6 @@
     <string name="hour_in_short">h</string>
     <string name="minute_in_short">m</string>
     <string name="play_video">play video!</string>
+    <string name="biography">Biography</string>
+    <string name="known_for">Known For</string>
 </resources>
