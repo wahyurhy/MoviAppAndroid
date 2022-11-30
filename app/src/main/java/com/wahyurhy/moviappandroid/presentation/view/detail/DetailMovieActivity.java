@@ -169,9 +169,10 @@ public class DetailMovieActivity extends AppCompatActivity implements VideoAdapt
     private String convertToHour(ResponseDetailMovie response) {
         double runtimeToHour = Double.parseDouble(String.valueOf(response.getRuntime())) / 60;
         String hour = String.valueOf(runtimeToHour).charAt(0) + getString(R.string.hour_in_short);
-        String minute = String.valueOf(runtimeToHour).charAt(2) + getString(R.string.minute_in_short);
+        char firstCharOfHour = String.valueOf(runtimeToHour).charAt(0);
+        int minute = Integer.parseInt(String.valueOf(response.getRuntime())) - (Integer.parseInt(String.valueOf(firstCharOfHour)) * 60);
 
-        String resultRuntime = hour + " 0" + minute;
+        String resultRuntime = hour + " " + minute + getString(R.string.minute_in_short);
         return resultRuntime;
     }
 
