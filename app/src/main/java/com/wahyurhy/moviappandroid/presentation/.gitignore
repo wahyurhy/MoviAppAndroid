@@ -1,0 +1,10 @@
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+
+D:\Bootcamp\Junior\Android\MoviAppAndroid\app\src\main\java\com\wahyurhy\moviappandroid\presentation\ContohGitIgnore.kt
