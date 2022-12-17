@@ -8,6 +8,7 @@ import android.os.Handler;
 
 import com.wahyurhy.moviappandroid.R;
 import com.wahyurhy.moviappandroid.presentation.MainActivity;
+import com.wahyurhy.moviappandroid.presentation.view.BottomNavigationActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -21,9 +22,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void startSplashScreen() {
         new Handler().postDelayed(() -> {
-            Intent intentMainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
-            intentMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intentMainActivity);
+            Intent intent = new Intent(SplashScreenActivity.this, BottomNavigationActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }, 2000);
     }
 }

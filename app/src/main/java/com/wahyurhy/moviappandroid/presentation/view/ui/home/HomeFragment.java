@@ -1,14 +1,17 @@
-package com.wahyurhy.moviappandroid.presentation;
+package com.wahyurhy.moviappandroid.presentation.view.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +21,6 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.OkHttpResponseAndParsedRequestListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.wahyurhy.moviappandroid.R;
 import com.wahyurhy.moviappandroid.core.data.remote.response.popularactor.ResponsePopularActor;
 import com.wahyurhy.moviappandroid.core.data.remote.response.popularactor.ResultsItemPopularActor;
 import com.wahyurhy.moviappandroid.core.data.remote.response.popularmovie.ResponsePopularMovie;
@@ -27,6 +29,7 @@ import com.wahyurhy.moviappandroid.core.data.remote.response.searchmovie.Respons
 import com.wahyurhy.moviappandroid.core.data.remote.response.searchmovie.ResultsItemSearchMovie;
 import com.wahyurhy.moviappandroid.core.data.remote.response.toprated.ResponseTopRatedMovie;
 import com.wahyurhy.moviappandroid.core.data.remote.response.toprated.ResultsItemTopRatedMovie;
+import com.wahyurhy.moviappandroid.databinding.FragmentHomeBinding;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularActorAdapter;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.PopularMovieAdapter;
 import com.wahyurhy.moviappandroid.presentation.view.adapter.SearchMovieAdapter;
@@ -39,31 +42,35 @@ import java.util.List;
 
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements TopRatedMovieAdapter.OnItemClickListener, PopularMovieAdapter.OnItemClickListener, PopularActorAdapter.OnItemClickListener, SearchMovieAdapter.OnItemClickListener {
+public class HomeFragment extends Fragment implements TopRatedMovieAdapter.OnItemClickListener, PopularMovieAdapter.OnItemClickListener, PopularActorAdapter.OnItemClickListener, SearchMovieAdapter.OnItemClickListener {
 
-    private RecyclerView mRvSearchMovie;
-    private RecyclerView mRvTopRatedMovie;
-    private RecyclerView mRvPopularActor;
-    private RecyclerView mRvPopularMovie;
+    private FragmentHomeBinding binding;
+
     private TopRatedMovieAdapter topRatedMovieAdapter;
     private SearchMovieAdapter searchMovieAdapter;
     private PopularActorAdapter popularActorAdapter;
     private PopularMovieAdapter popularMovieAdapter;
-    private SearchView mSearchView;
-    private LinearLayout mLytResultSearchView;
-    private LinearLayout mLytTopRatedMovie;
+
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initView();
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initLoadData();
         initSearch();
     }
 
+    private void initLoadData() {
+        loadDataTopRated();
+        loadDataPopularActor();
+        loadDataPopularMovie();
+    }
+
     private void initSearch() {
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -73,18 +80,13 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
             public boolean onQueryTextChange(String newText) {
                 if (newText != null) {
                     loadDataSearchView(newText);
-                    mLytTopRatedMovie.setVisibility(View.GONE);
-                    mLytResultSearchView.setVisibility(View.VISIBLE);
+                    binding.lytTopRatedMovie.setVisibility(View.GONE);
+                    binding.lytResultSearchView.setVisibility(View.VISIBLE);
+                    binding.lytResultNotFoundSearchView.setVisibility(View.GONE);
                 }
                 return false;
             }
         });
-    }
-
-    private void initLoadData() {
-        loadDataTopRated();
-        loadDataPopularActor();
-        loadDataPopularMovie();
     }
 
     private void loadDataSearchView(String query) {
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
                 .addQueryParameter("page", "1")
                 .addQueryParameter("query", query)
                 .setTag("loadDataSearchView")
-                .setPriority(Priority.MEDIUM)
+                .setPriority(Priority.HIGH)
                 .build()
                 .getAsOkHttpResponseAndObject(ResponseSearchMovie.class, new OkHttpResponseAndParsedRequestListener<ResponseSearchMovie>() {
                     @Override
@@ -103,30 +105,142 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
                         List<ResultsItemSearchMovie> dataResultItem;
                         String resultString = gson.toJson(response.getResults());
 
-                        searchMovieAdapter = new SearchMovieAdapter(MainActivity.this);
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+                        searchMovieAdapter = new SearchMovieAdapter(getActivity());
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
                         linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
-                        mRvSearchMovie.setLayoutManager(linearLayoutManager);
-                        mRvSearchMovie.setHasFixedSize(true);
-                        mRvSearchMovie.setAdapter(searchMovieAdapter);
+                        binding.rvSearchMovie.setLayoutManager(linearLayoutManager);
+                        binding.rvSearchMovie.setHasFixedSize(true);
+                        binding.rvSearchMovie.setAdapter(searchMovieAdapter);
 
                         dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemSearchMovie>>() {
                         }.getType());
 
                         if (dataResultItem.size() != 0) {
+                            binding.rvSearchMovie.setVisibility(View.VISIBLE);
                             searchMovieAdapter.addAll(dataResultItem);
-                            searchMovieAdapter.setOnItemClickListener(MainActivity.this);
+                            searchMovieAdapter.setOnItemClickListener(HomeFragment.this);
                         } else {
-                            mRvTopRatedMovie.setVisibility(View.GONE);
+                            binding.rvSearchMovie.setVisibility(View.INVISIBLE);
+                            binding.lytResultNotFoundSearchView.setVisibility(View.VISIBLE);
                             loadDataTopRated();
                         }
                     }
 
                     @Override
                     public void onError(ANError error) {
-                        Toast.makeText(MainActivity.this, error.getErrorDetail(), Toast.LENGTH_SHORT).show();
-                        mLytTopRatedMovie.setVisibility(View.VISIBLE);
-                        mLytResultSearchView.setVisibility(View.GONE);
+                        binding.lytTopRatedMovie.setVisibility(View.VISIBLE);
+                        binding.lytResultSearchView.setVisibility(View.GONE);
+                        binding.lytResultNotFoundSearchView.setVisibility(View.GONE);
+                        if (error.getErrorCode() != 0) {
+                            // received error from server
+                            // error.getErrorCode() - the error code from server
+                            // error.getErrorBody() - the error body from server
+                            // error.getErrorDetail() - just an error detail
+                            Log.d("TAG", "onError errorCode : " + error.getErrorCode());
+                            Log.d("TAG", "onError errorBody : " + error.getErrorBody());
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                            // get parsed error object (If ApiError is your class)
+
+                        } else {
+                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                        }
+                    }
+                });
+    }
+
+    private void loadDataTopRated() {
+        binding.rvTopRatedMovie.setVisibility(View.VISIBLE);
+        AndroidNetworking.get("https://api.themoviedb.org/3/movie/top_rated")
+                .addQueryParameter("api_key", "f3aa39c23e3c246fc689906fcddb40b5")
+                .addQueryParameter("language", "en-US")
+                .addQueryParameter("page", "1")
+                .setTag("loadDataTopRated")
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsOkHttpResponseAndObject(ResponseTopRatedMovie.class, new OkHttpResponseAndParsedRequestListener<ResponseTopRatedMovie>() {
+                    @Override
+                    public void onResponse(Response okHttpResponse, ResponseTopRatedMovie response) {
+                        Gson gson = new Gson();
+                        List<ResultsItemTopRatedMovie> dataResultItem;
+                        String resultString = gson.toJson(response.getResults());
+
+                        topRatedMovieAdapter = new TopRatedMovieAdapter(getActivity());
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+                        binding.rvTopRatedMovie.setLayoutManager(linearLayoutManager);
+                        binding.rvTopRatedMovie.setHasFixedSize(true);
+                        binding.rvTopRatedMovie.setAdapter(topRatedMovieAdapter);
+
+                        dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemTopRatedMovie>>() {
+                        }.getType());
+
+                        if (dataResultItem.size() != 0) {
+                            topRatedMovieAdapter.addAll(dataResultItem);
+                            topRatedMovieAdapter.setOnItemClickListener(HomeFragment.this);
+                        } else {
+                            binding.rvTopRatedMovie.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        Toast.makeText(requireContext(), error.getErrorDetail(), Toast.LENGTH_SHORT).show();
+                        if (error.getErrorCode() != 0) {
+                            // received error from server
+                            // error.getErrorCode() - the error code from server
+                            // error.getErrorBody() - the error body from server
+                            // error.getErrorDetail() - just an error detail
+                            Log.d("TAG", "onError errorCode : " + error.getErrorCode());
+                            Log.d("TAG", "onError errorBody : " + error.getErrorBody());
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                            // get parsed error object (If ApiError is your class)
+
+                        } else {
+                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
+                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
+                        }
+                    }
+                });
+
+    }
+
+    private void loadDataPopularActor() {
+        AndroidNetworking.get("https://api.themoviedb.org/3/person/popular")
+                .addQueryParameter("api_key", "f3aa39c23e3c246fc689906fcddb40b5")
+                .addQueryParameter("language", "en-US")
+                .addQueryParameter("page", "1")
+                .setTag("loadDataPopularActor")
+                .setPriority(Priority.IMMEDIATE)
+                .build()
+                .getAsOkHttpResponseAndObject(ResponsePopularActor.class, new OkHttpResponseAndParsedRequestListener<ResponsePopularActor>() {
+                    @Override
+                    public void onResponse(Response okHttpResponse, ResponsePopularActor response) {
+                        Gson gson = new Gson();
+                        List<ResultsItemPopularActor> dataResultItem;
+                        String resultString = gson.toJson(response.getResults());
+
+                        popularActorAdapter = new PopularActorAdapter(getActivity());
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+                        binding.rvPopularActor.setLayoutManager(linearLayoutManager);
+                        binding.rvPopularActor.setHasFixedSize(true);
+                        binding.rvPopularActor.setAdapter(popularActorAdapter);
+
+                        dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemPopularActor>>() {
+                        }.getType());
+
+                        if (dataResultItem.size() != 0) {
+                            popularActorAdapter.addAll(dataResultItem);
+                            popularActorAdapter.setOnItemClickListener(HomeFragment.this);
+                        } else {
+                            binding.rvPopularActor.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        Toast.makeText(requireContext(), error.getErrorDetail(), Toast.LENGTH_SHORT).show();
                         if (error.getErrorCode() != 0) {
                             // received error from server
                             // error.getErrorCode() - the error code from server
@@ -160,27 +274,27 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
                         List<ResultsItemPopularMovie> dataResultItem;
                         String resultString = gson.toJson(response.getResults());
 
-                        popularMovieAdapter = new PopularMovieAdapter(MainActivity.this);
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+                        popularMovieAdapter = new PopularMovieAdapter(getActivity());
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
                         linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
-                        mRvPopularMovie.setLayoutManager(linearLayoutManager);
-                        mRvPopularMovie.setHasFixedSize(true);
-                        mRvPopularMovie.setAdapter(popularMovieAdapter);
+                        binding.rvPopularMovie.setLayoutManager(linearLayoutManager);
+                        binding.rvPopularMovie.setHasFixedSize(true);
+                        binding.rvPopularMovie.setAdapter(popularMovieAdapter);
 
                         dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemPopularMovie>>() {
                         }.getType());
 
                         if (dataResultItem.size() != 0) {
                             popularMovieAdapter.addAll(dataResultItem);
-                            popularMovieAdapter.setOnItemClickListener(MainActivity.this);
+                            popularMovieAdapter.setOnItemClickListener(HomeFragment.this);
                         } else {
-                            mRvPopularMovie.setVisibility(View.GONE);
+                            binding.rvPopularMovie.setVisibility(View.GONE);
                         }
                     }
 
                     @Override
                     public void onError(ANError error) {
-                        Toast.makeText(MainActivity.this, error.getErrorDetail(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), error.getErrorDetail(), Toast.LENGTH_SHORT).show();
                         if (error.getErrorCode() != 0) {
                             // received error from server
                             // error.getErrorCode() - the error code from server
@@ -197,140 +311,18 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
                         }
                     }
                 });
-    }
-
-    private void loadDataPopularActor() {
-        AndroidNetworking.get("https://api.themoviedb.org/3/person/popular")
-                .addQueryParameter("api_key", "f3aa39c23e3c246fc689906fcddb40b5")
-                .addQueryParameter("language", "en-US")
-                .addQueryParameter("page", "1")
-                .setTag("loadDataPopularActor")
-                .setPriority(Priority.IMMEDIATE)
-                .build()
-                .getAsOkHttpResponseAndObject(ResponsePopularActor.class, new OkHttpResponseAndParsedRequestListener<ResponsePopularActor>() {
-                    @Override
-                    public void onResponse(Response okHttpResponse, ResponsePopularActor response) {
-                        Gson gson = new Gson();
-                        List<ResultsItemPopularActor> dataResultItem;
-                        String resultString = gson.toJson(response.getResults());
-
-                        popularActorAdapter = new PopularActorAdapter(MainActivity.this);
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
-                        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
-                        mRvPopularActor.setLayoutManager(linearLayoutManager);
-                        mRvPopularActor.setHasFixedSize(true);
-                        mRvPopularActor.setAdapter(popularActorAdapter);
-
-                        dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemPopularActor>>() {
-                        }.getType());
-
-                        if (dataResultItem.size() != 0) {
-                            popularActorAdapter.addAll(dataResultItem);
-                            popularActorAdapter.setOnItemClickListener(MainActivity.this);
-                        } else {
-                            mRvPopularActor.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onError(ANError error) {
-                        Toast.makeText(MainActivity.this, error.getErrorDetail(), Toast.LENGTH_SHORT).show();
-                        if (error.getErrorCode() != 0) {
-                            // received error from server
-                            // error.getErrorCode() - the error code from server
-                            // error.getErrorBody() - the error body from server
-                            // error.getErrorDetail() - just an error detail
-                            Log.d("TAG", "onError errorCode : " + error.getErrorCode());
-                            Log.d("TAG", "onError errorBody : " + error.getErrorBody());
-                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
-                            // get parsed error object (If ApiError is your class)
-
-                        } else {
-                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
-                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
-                        }
-                    }
-                });
-    }
-
-    private void loadDataTopRated() {
-        mRvTopRatedMovie.setVisibility(View.VISIBLE);
-        AndroidNetworking.get("https://api.themoviedb.org/3/movie/top_rated")
-                .addQueryParameter("api_key", "f3aa39c23e3c246fc689906fcddb40b5")
-                .addQueryParameter("language", "en-US")
-                .addQueryParameter("page", "1")
-                .setTag("loadDataTopRated")
-                .setPriority(Priority.HIGH)
-                .build()
-                .getAsOkHttpResponseAndObject(ResponseTopRatedMovie.class, new OkHttpResponseAndParsedRequestListener<ResponseTopRatedMovie>() {
-                    @Override
-                    public void onResponse(Response okHttpResponse, ResponseTopRatedMovie response) {
-                        Gson gson = new Gson();
-                        List<ResultsItemTopRatedMovie> dataResultItem;
-                        String resultString = gson.toJson(response.getResults());
-
-                        topRatedMovieAdapter = new TopRatedMovieAdapter(MainActivity.this);
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
-                        linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
-                        mRvTopRatedMovie.setLayoutManager(linearLayoutManager);
-                        mRvTopRatedMovie.setHasFixedSize(true);
-                        mRvTopRatedMovie.setAdapter(topRatedMovieAdapter);
-
-                        dataResultItem = new Gson().fromJson(resultString, new TypeToken<ArrayList<ResultsItemTopRatedMovie>>() {
-                        }.getType());
-
-                        if (dataResultItem.size() != 0) {
-                            topRatedMovieAdapter.addAll(dataResultItem);
-                            topRatedMovieAdapter.setOnItemClickListener(MainActivity.this);
-                        } else {
-                            mRvTopRatedMovie.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onError(ANError error) {
-                        Toast.makeText(MainActivity.this, error.getErrorDetail(), Toast.LENGTH_SHORT).show();
-                        if (error.getErrorCode() != 0) {
-                            // received error from server
-                            // error.getErrorCode() - the error code from server
-                            // error.getErrorBody() - the error body from server
-                            // error.getErrorDetail() - just an error detail
-                            Log.d("TAG", "onError errorCode : " + error.getErrorCode());
-                            Log.d("TAG", "onError errorBody : " + error.getErrorBody());
-                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
-                            // get parsed error object (If ApiError is your class)
-
-                        } else {
-                            // error.getErrorDetail() : connectionError, parseError, requestCancelledError
-                            Log.d("TAG", "onError errorDetail : " + error.getErrorDetail());
-                        }
-                    }
-                });
-
-    }
-
-    private void initView() {
-        mRvTopRatedMovie = findViewById(R.id.rv_top_rated_movie);
-        mRvPopularActor = findViewById(R.id.rv_popular_actor);
-        mRvPopularMovie = findViewById(R.id.rv_popular_movie);
-        mSearchView = findViewById(R.id.search_view);
-        mRvSearchMovie = findViewById(R.id.rv_search_movie);
-        mLytResultSearchView = findViewById(R.id.lyt_result_search_view);
-        mLytTopRatedMovie = findViewById(R.id.lyt_top_rated_movie);
-
-        mLytResultSearchView.setVisibility(View.GONE);
     }
 
     @Override
     public void onItemClick(View view, ResultsItemTopRatedMovie resultsItemTopRatedMovie, int position) {
-        Intent intentDetailActivity = new Intent(MainActivity.this, DetailMovieActivity.class);
+        Intent intentDetailActivity = new Intent(requireContext(), DetailMovieActivity.class);
         intentDetailActivity.putExtra("id_extra", String.valueOf(resultsItemTopRatedMovie.getId()));
         startActivity(intentDetailActivity);
     }
 
     @Override
     public void onItemClick(View view, ResultsItemPopularMovie resultsItemPopularMovie, int position) {
-        Intent intentDetailActivity = new Intent(MainActivity.this, DetailMovieActivity.class);
+        Intent intentDetailActivity = new Intent(requireContext(), DetailMovieActivity.class);
         intentDetailActivity.putExtra("id_extra", String.valueOf(resultsItemPopularMovie.getId()));
         startActivity(intentDetailActivity);
     }
@@ -339,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
     public void onItemClick(View view, ResultsItemPopularActor resultsItemPopularActor, int position) {
         Gson gson = new Gson();
 
-        Intent intentBioActivity = new Intent(MainActivity.this, BioActivity.class);
+        Intent intentBioActivity = new Intent(requireContext(), BioActivity.class);
         intentBioActivity.putExtra("id_extra", String.valueOf(resultsItemPopularActor.getId()));
         intentBioActivity.putExtra("actor_extra", gson.toJson(resultsItemPopularActor));
         startActivity(intentBioActivity);
@@ -347,8 +339,14 @@ public class MainActivity extends AppCompatActivity implements TopRatedMovieAdap
 
     @Override
     public void onItemClick(View view, ResultsItemSearchMovie resultsItemSearchMovies, int position) {
-        Intent intentDetailActivity = new Intent(MainActivity.this, DetailMovieActivity.class);
+        Intent intentDetailActivity = new Intent(requireContext(), DetailMovieActivity.class);
         intentDetailActivity.putExtra("id_extra", String.valueOf(resultsItemSearchMovies.getId()));
         startActivity(intentDetailActivity);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

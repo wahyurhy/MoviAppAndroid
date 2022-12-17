@@ -47,6 +47,7 @@ public class DetailMovieActivity extends AppCompatActivity implements VideoAdapt
     private TextView mGenre2;
     private TextView mGenre3;
     private TextView mTvOverviewContent;
+    private TextView mTvVideoHeader;
     private RecyclerView mRvVideoTrailer;
 
     private VideoAdapter videoAdapter;
@@ -88,6 +89,7 @@ public class DetailMovieActivity extends AppCompatActivity implements VideoAdapt
                             videoAdapter.addAll(dataResultItem);
                             videoAdapter.setOnItemClickListener(DetailMovieActivity.this);
                         } else {
+                            mTvVideoHeader.setVisibility(View.GONE);
                             mRvVideoTrailer.setVisibility(View.GONE);
                         }
                     }
@@ -177,7 +179,11 @@ public class DetailMovieActivity extends AppCompatActivity implements VideoAdapt
     }
 
     private void setGenres(ResponseDetailMovie response) {
-        if (response.getGenres().size() <= 1) {
+        if (response.getGenres().size() < 1) {
+            mGenre1.setVisibility(View.GONE);
+            mGenre2.setVisibility(View.GONE);
+            mGenre3.setVisibility(View.GONE);
+        } else if (response.getGenres().size() <= 1) {
             mGenre1.setText(response.getGenres().get(0).getName());
             mGenre1.setVisibility(View.VISIBLE);
         } else if (response.getGenres().size() <= 2) {
@@ -208,19 +214,15 @@ public class DetailMovieActivity extends AppCompatActivity implements VideoAdapt
         mTvOverviewContent = findViewById(R.id.tv_overview_content);
         mRvVideoTrailer = findViewById(R.id.rv_video_trailer);
 
-        mIbBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        mIbBack.setOnClickListener(view -> finish());
+        mTvVideoHeader = findViewById(R.id.tv_video_header);
     }
 
     private void initialize() {
         setSystemBarFitWindow(this);
     }
 
-    public static void watchYoutubeVideo(Context context, String id){
+    public static void watchYoutubeVideo(Context context, String id) {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + id));

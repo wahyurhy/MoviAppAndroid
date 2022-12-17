@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.MoviAppAndroid" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/logo_app_color</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -14,4 +14,10 @@
         <item name="android:navigationBarColor">@color/bg_app_color</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:editTextColor">@color/black</item>
+    </style>
+
+    <color name="default_image_number">@color/black</color>
 </resources>

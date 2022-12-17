@@ -17,6 +17,16 @@
             android:orientation="vertical"
             tools:ignore="UselessParent">
 
+            <ImageButton
+                android:id="@+id/ib_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/bg_back_button"
+                android:padding="5dp"
+                android:src="@drawable/ic_back" />
+
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
