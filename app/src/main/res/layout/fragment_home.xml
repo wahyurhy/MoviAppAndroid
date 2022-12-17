@@ -5,23 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_app_color"
-    tools:context=".presentation.MainActivity">
+    tools:context=".presentation.view.BottomNavigationActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/iv_app_name"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/logo_app"
+            tools:ignore="ContentDescription" />
+
         <LinearLayout
             android:id="@+id/lyt_search_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/iv_app_name"
             android:layout_marginHorizontal="30dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="-15dp"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/search_view"
-                android:theme="@style/MySearchViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:background="@drawable/bg_search"
@@ -33,6 +41,7 @@
                 android:singleLine="true"
                 android:textColorHint="@color/black"
                 android:textSize="16sp"
+                android:theme="@style/MySearchViewStyle"
                 app:closeIcon="@drawable/ic_cross"
                 app:iconifiedByDefault="false"
                 app:queryHint="@string/hint_search_view"
@@ -46,7 +55,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/lyt_search_bar"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -66,6 +76,35 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_top_rated_movie" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lyt_result_not_found_search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lyt_search_bar"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="30dp"
+                android:paddingTop="20dp"
+                android:text="@string/result_movies"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_not_found"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:layout_marginBottom="10dp"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/not_found" />
 
         </LinearLayout>
 
@@ -147,6 +186,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="80dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_popular_movie" />

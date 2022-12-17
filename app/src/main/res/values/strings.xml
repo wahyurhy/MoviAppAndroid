@@ -11,4 +11,16 @@
     <string name="play_video">play video!</string>
     <string name="biography">Biography</string>
     <string name="known_for">Known For</string>
+    <string name="hint_search_view">Search movie here..</string>
+    <string name="result_movies">Result Movies</string>
+    <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_profile">Profile</string>
+    <string name="about_me_content">I am a student at Singaperbangsa Karawang University, majoring in Computer Science 7th semester. I am passionate about Android Development. During my last year of study, I graduated from the Bangkit Academy 2022 program and I learned a lot of stuff from that program in Android Development, and my skills would be valuable for this company to contribute better approach and implementation of Android Development. I am now seeking an opportunity as an Android Developer and I believe my past experiences will give a huge impact on your company in the future.</string>
+    <string name="about_me">About Me</string>
+    <string name="wahyu_rahayu">Wahyu Rahayu</string>
+    <string name="role">Android Developer</string>
+    <string name="wahyurhy">wahyurhy</string>
+    <string name="wahyu_rhy">wahyu.rhy</string>
+    <string name="hire_me">Hire Me! 😎</string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class BioActivity extends AppCompatActivity implements PopularActorDetail
     private TextView mBioContent;
     private TextView mTvKnownFor;
     private RecyclerView mRvKnownFor;
+    private ImageButton mIbBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +130,9 @@ public class BioActivity extends AppCompatActivity implements PopularActorDetail
         mBioContent = findViewById(R.id.bio_content);
         mRvKnownFor = findViewById(R.id.rv_known_for);
         mTvKnownFor = findViewById(R.id.tv_known_for);
+        mIbBack = findViewById(R.id.ib_back);
+
+        mIbBack.setOnClickListener(view -> finish());
     }
 
     @Override
